@@ -21,7 +21,17 @@ defmodule Commanded.Middleware.Auditing do
 
   def after_failure(%Pipeline{} = pipeline), do: failure(pipeline)
 
-  defp audit(%Pipeline{} = pipeline) do
+  defp audit(%Pipeline{} = pipeline), do: if(enabled?(), do: do_audit(pipeline), else: pipeline)
+
+  defp success(%Pipeline{} = pipeline),
+    do: if(enabled?(), do: do_success(pipeline), else: pipeline)
+
+  defp failure(%Pipeline{} = pipeline),
+    do: if(enabled?(), do: do_failure(pipeline), else: pipeline)
+
+  defp enabled?(), do: Application.get_env(:commanded_audit_middleware, :enabled, true)
+
+  defp do_audit(%Pipeline{} = pipeline) do
     %Pipeline{
       assigns: %{occurred_at: occurred_at},
       causation_id: causation_id,
@@ -46,7 +56,7 @@ defmodule Commanded.Middleware.Auditing do
     pipeline
   end
 
-  defp success(%Pipeline{} = pipeline) do
+  defp do_success(%Pipeline{} = pipeline) do
     %Pipeline{command_uuid: command_uuid} = pipeline
 
     command_uuid
@@ -61,7 +71,7 @@ defmodule Commanded.Middleware.Auditing do
     pipeline
   end
 
-  defp failure(%Pipeline{} = pipeline) do
+  defp do_failure(%Pipeline{} = pipeline) do
     %Pipeline{command_uuid: command_uuid} = pipeline
 
     command_uuid

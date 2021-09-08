@@ -9,9 +9,12 @@ defmodule Commanded.Middleware.Auditing.Application do
   use Application
 
   def start(_type, _args) do
-    children = [
-      Commanded.Middleware.Auditing.Repo
-    ]
+    children =
+      if Application.get_env(:commanded_audit_middleware, :enabled, true) do
+        [Commanded.Middleware.Auditing.Repo]
+      else
+        []
+      end
 
     opts = [strategy: :one_for_one, name: Commanded.Middleware.Auditing.Supervisor]
     Supervisor.start_link(children, opts)
