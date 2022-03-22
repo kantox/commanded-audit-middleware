@@ -49,9 +49,9 @@ defmodule Commanded.Middleware.Auditing.Mixfile do
       {:ecto, "~> 3.3"},
       {:ecto_sql, "~> 3.3"},
       {:elixir_uuid, "~> 1.2"},
-      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_doc, "~> 0.25", only: :dev, runtime: false},
       {:jason, "~> 1.1"},
-      {:postgrex, "~> 0.15.0"}
+      {:postgrex, "~> 0.15.0 or ~> 0.16.0 or ~> 1.0"}
     ]
   end
 
